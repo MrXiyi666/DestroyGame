@@ -26,6 +26,3 @@ APK编译不是最新的 所以可以直接打开index.html
 **游戏运行设备须知**
 支持Android10以上设备 因为Android10以上设备的WebView版本不是特别低 基本上都可以直接运行 Android10以下的WebView版本过低 所以问题会比较多 直接放弃
 
-**APK下载地址**
-LegendOfTheBrave\app\release 文件夹有最新编译的APK包 一般都是最新的 
-
