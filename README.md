@@ -6,7 +6,6 @@
 
 作为免费开源的RPGMZ小游戏 用于学习交流
 
-
 app文件夹内 assets是RPGMZ游戏的源文件
 其他文件是Android源代码
 https://github.com/MrXiyi666/LegendOfTheBrave/tree/main/app/src/main/assets/game
@@ -25,4 +24,3 @@ APK编译不是最新的 所以可以直接打开index.html
 
 **游戏运行设备须知**
 支持Android10以上设备 因为Android10以上设备的WebView版本不是特别低 基本上都可以直接运行 Android10以下的WebView版本过低 所以问题会比较多 直接放弃
-
