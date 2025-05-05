@@ -1,4 +1,4 @@
 [
 null,
-{"id":1,"battlerName":"Actor1_1","characterIndex":0,"characterName":"Actor1","classId":1,"equips":[2,0,0,3,0],"faceIndex":0,"faceName":"Actor1","traits":[],"initialLevel":1,"maxLevel":99,"name":"谢羽","nickname":"无双英雄","note":"","profile":"热爱武术的少年意外穿越到异世界 成为一名勇者"}
+{"id":1,"battlerName":"Actor1_1","characterIndex":0,"characterName":"Actor1","classId":1,"equips":[],"faceIndex":0,"faceName":"Actor1","traits":[{"code":11,"dataId":1,"value":1},{"code":31,"dataId":1,"value":1},{"code":51,"dataId":1,"value":1},{"code":52,"dataId":1,"value":1},{"code":63,"dataId":3,"value":1}],"initialLevel":1,"maxLevel":99,"name":"谢羽","nickname":"无双英雄","note":"","profile":"热爱武术的少年意外穿越到异世界 成为一名勇者"}
 ]

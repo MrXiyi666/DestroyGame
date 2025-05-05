@@ -3,13 +3,19 @@ package fun.android.legendofthebrave;
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
+import androidx.webkit.WebViewAssetLoader.Builder;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webview;
@@ -17,25 +23,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 隐藏状态栏
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        View decorView = getWindow().getDecorView();
+        WindowInsetsController controller = decorView.getWindowInsetsController();
+        if (controller != null) {
+            controller.hide(WindowInsets.Type.statusBars());
+        }
         setContentView(R.layout.activity_main);
 
         webview = findViewById(R.id.webview);
 
         // 启用JavaScript（如果HTML文件中包含JavaScript代码）
         webview.getSettings().setJavaScriptEnabled(true);
-        webview.getSettings().setAllowFileAccess(true);
-        webview.getSettings().setAllowFileAccessFromFileURLs(true);
-        webview.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        webview.getSettings().setAllowFileAccess(true); // 启用文件访问
+        webview.getSettings().setAllowContentAccess(true); // 启用内容访问
         webview.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        // 设置WebViewClient，防止点击链接时跳转到系统浏览器
-        webview.setWebViewClient(new WebViewClient());
-
+        WebViewAssetLoader assetLoader = new Builder()
+                .addPathHandler("/assets/", new AssetsPathHandler(this))
+                .build();
 
         webview.setWebViewClient(new WebViewClient() {
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                return assetLoader.shouldInterceptRequest(request.getUrl());
+            }
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return super.shouldOverrideUrlLoading(view, request);
+            }
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -46,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             webview.restoreState(savedInstanceState);
         } else {
             // 加载assets文件夹中的HTML文件
-            webview.loadUrl("file:///android_asset/game/index.html");
+            webview.loadUrl("https://appassets.androidplatform.net/assets/game/index.html");
         }
     }
 
