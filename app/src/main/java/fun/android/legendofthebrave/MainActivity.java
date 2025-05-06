@@ -37,9 +37,7 @@ public class MainActivity extends AppCompatActivity {
         webview.getSettings().setAllowFileAccess(true); // 启用文件访问
         webview.getSettings().setAllowContentAccess(true); // 启用内容访问
         webview.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        WebViewAssetLoader assetLoader = new Builder()
-                .addPathHandler("/assets/", new AssetsPathHandler(this))
-                .build();
+        WebViewAssetLoader assetLoader = new Builder().addPathHandler("/assets/", new AssetsPathHandler(this)).build();
 
         webview.setWebViewClient(new WebViewClient() {
             @Override
