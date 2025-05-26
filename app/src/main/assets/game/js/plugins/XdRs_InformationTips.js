@@ -355,9 +355,9 @@ Window_Information.prototype.setupActions = function() {
     const mx2 = type === 0 ? -5 : 5;
     const mx3 = type === 0 ? -this.width/10 : this.width/10;
     this._actions.push({'count':20, 'mx':mx1});
-    this._actions.push({'count':120});
+    this._actions.push({'count':1});
     this._actions.push({'count':10,'mx':mx2});
-    this._actions.push({'count':180});
+    this._actions.push({'count':100});
     this._actions.push({'count':10,'mx':mx3});
 };
 Window_Information.prototype.isInPlace = function() {
