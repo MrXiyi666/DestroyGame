@@ -8,4 +8,9 @@
         android:text="导入本地图片"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_bool_anjian"
+        android:text="开关虚拟按键"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
