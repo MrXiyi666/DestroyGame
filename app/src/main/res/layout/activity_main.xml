@@ -2,15 +2,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:background="#000000"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
     <ImageView
-        android:alpha="0.5"
+        android:id="@+id/back_image"
+        android:alpha="0.8"
         android:scaleType="centerCrop"
-        android:src="@drawable/back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <WebView
@@ -21,18 +19,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <androidx.appcompat.widget.AppCompatButton
-        android:layout_margin="10dp"
+        android:background="@drawable/button_event_back_tran"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
         android:text="菜单"
         android:id="@+id/button_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/button_event_back_tran"
         android:id="@+id/button_left"
         android:layout_above="@id/button_down"
         android:text="左"
         android:layout_width="80dp"
         android:layout_height="wrap_content"/>
     <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/button_event_back_tran"
         android:layout_marginStart="80dp"
         android:layout_alignParentBottom="true"
         android:id="@+id/button_down"
@@ -40,6 +42,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"/>
     <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/button_event_back_tran"
         android:layout_marginStart="80dp"
         android:id="@+id/button_up"
         android:layout_above="@id/button_left"
@@ -47,6 +50,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"/>
     <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/button_event_back_tran"
         android:layout_marginStart="160dp"
         android:id="@+id/button_right"
         android:layout_above="@id/button_down"
@@ -54,6 +58,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"/>
     <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/button_event_back_tran"
         android:id="@+id/button_cancel"
         android:text="取消"
         android:layout_alignParentRight="true"
@@ -62,6 +67,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"/>
     <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/button_event_back_tran"
         android:id="@+id/button_ok"
         android:layout_above="@id/button_cancel"
         android:layout_alignParentEnd="true"

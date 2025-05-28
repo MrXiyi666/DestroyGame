@@ -1,9 +1,12 @@
 package fun.android.legendofthebrave.fun;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -15,17 +18,23 @@ import androidx.webkit.WebViewAssetLoader;
 import fun.android.legendofthebrave.data.able;
 
 public class Fun_WebView {
-    public static void 启动(Activity activity, Bundle savedInstanceState){
+    @SuppressLint("SetJavaScriptEnabled")
+    public static void 启动(Activity activity){
+        Bitmap 壁纸 = Fun.读取壁纸(activity);
+        if(壁纸!=null){
+            able.back_image.setImageBitmap(壁纸);
+        }
+        able.back_image.setBackgroundColor(Color.BLACK);
         able.webView.setBackgroundColor(Color.TRANSPARENT);
+        able.webView.setVerticalScrollBarEnabled(false);
+        able.webView.setHorizontalScrollBarEnabled(false);
+
         able.webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         able.webView.getSettings().setJavaScriptEnabled(true);
         able.webView.getSettings().setLoadWithOverviewMode(true); // 适应屏幕宽度
         able.webView.getSettings().setAllowFileAccess(true);
         able.webView.getSettings().setAllowContentAccess(true);
         able.webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        able.webView.getSettings().setUseWideViewPort(true); // 支持任意比例缩放
-        able.webView.getSettings().setBuiltInZoomControls(true); // 显示放大缩小按钮
-        able.webView.getSettings().setSupportZoom(true); // 支持缩放
         WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(activity)).build();
 
         able.webView.setWebViewClient(new WebViewClient() {
@@ -43,10 +52,7 @@ public class Fun_WebView {
                 able.webView.requestFocus();
             }
         });
-        if (savedInstanceState != null) {
-            able.webView.restoreState(savedInstanceState);
-        } else {
-            able.webView.loadUrl("https://appassets.androidplatform.net/assets/game/index.html");
-        }
+        able.webView.loadUrl("https://appassets.androidplatform.net/assets/game/index.html");// 注入 CSS 去掉网页内容的内边距和外边距
+
     }
 }

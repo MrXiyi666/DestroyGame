@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_xuanze"
-        android:text="导入本地图片"
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_bool_anjian"
-        android:text="开关虚拟按键"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatButton
+            android:background="@drawable/button_event_back_tran"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/button_image"
+            android:text="导入本地图片"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_event_back_tran"
+            android:id="@+id/button_cancel_image"
+            android:text="删除壁纸"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_event_back_tran"
+            android:id="@+id/button_bool_anjian"
+            android:text="开关虚拟按键"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_event_back_tran"
+            android:id="@+id/button_exit"
+            android:text="关闭游戏"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>
