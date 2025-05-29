@@ -2,11 +2,8 @@ package fun.android.legendofthebrave.fun;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -20,11 +17,7 @@ import fun.android.legendofthebrave.data.able;
 public class Fun_WebView {
     @SuppressLint("SetJavaScriptEnabled")
     public static void 启动(Activity activity){
-        Bitmap 壁纸 = Fun.读取壁纸(activity);
-        if(壁纸!=null){
-            able.back_image.setImageBitmap(壁纸);
-        }
-        able.back_image.setBackgroundColor(Color.BLACK);
+
         able.webView.setBackgroundColor(Color.TRANSPARENT);
         able.webView.setVerticalScrollBarEnabled(false);
         able.webView.setHorizontalScrollBarEnabled(false);

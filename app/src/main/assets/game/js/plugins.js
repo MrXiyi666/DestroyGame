@@ -6,5 +6,6 @@ var $plugins =
 {"name":"XdRs_InformationTips","status":true,"description":"得失物品信息提示。","parameters":{"displayType":"R","iconTips":"false","currencyIcon":"314","loseSe":"Crossbow","variableSe":"Chime2","goldSe":"Shop2","itemSe":"Equip1","color0":"11","color1":"18","variableArr":"[]"}},
 {"name":"XdRs_BubbleDialog","status":true,"description":"气泡对话框。","parameters":{}},
 {"name":"XdRs_AutomaticSpeaking","status":true,"description":"NPC自动说话 + 指定对象说话 （MV + MZ）。","parameters":{"windowskins":"","defaultDuration":"180","defaultWaitCount":" 360"}},
-{"name":"Fun_Actor_Title_Show","status":true,"description":"地图上主角头顶显示称号。","parameters":{}}
+{"name":"Fun_Actor_Title_Show","status":true,"description":"地图上主角头顶显示称号。","parameters":{}},
+{"name":"Fun_Event_Title_Show","status":true,"description":"地图上任意事件头顶显示称号。","parameters":{}}
 ];

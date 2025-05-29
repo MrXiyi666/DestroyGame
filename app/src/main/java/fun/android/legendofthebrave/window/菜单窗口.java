@@ -6,36 +6,21 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.activity.result.PickVisualMediaRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import java.util.Objects;
 import fun.android.legendofthebrave.R;
 import fun.android.legendofthebrave.data.able;
-import fun.android.legendofthebrave.fun.Fun;
 
 public class 菜单窗口 {
     public static void 启动(Activity activity){
         var dialog = new AlertDialog.Builder(activity).create();
         var view = View.inflate(activity, R.layout.window_menu_view, null);
-        AppCompatButton button_image = view.findViewById(R.id.button_image);
         AppCompatButton button_bool_anjian = view.findViewById(R.id.button_bool_anjian);
-        AppCompatButton button_cancel_image = view.findViewById(R.id.button_cancel_image);
         AppCompatButton button_exit = view.findViewById(R.id.button_exit);
 
         button_exit.setOnClickListener(V->{
             System.exit(0);
-        });
-
-        button_cancel_image.setOnClickListener(V->{
-            able.back_image.setImageBitmap(null);
-            able.back_image.setBackgroundColor(Color.BLACK);
-            Fun.删除壁纸(activity);
-        });
-
-        button_image.setOnClickListener(V->{
-            able.导入图片.launch( new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE).build());
         });
 
         button_bool_anjian.setOnClickListener(V->{
