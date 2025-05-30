@@ -70,18 +70,17 @@
 			this.bitmap.outlineWidth = 3;
 			this.bitmap.paintOpacity = 255;
 			this.sprite = new Sprite(this.bitmap); 
-			this.width = width;
-			this.height=height;
 		}
 		
 		Refresh(x, y, text){
 			this.bitmap.clear();
-			this.bitmap.drawText(text, 0, 0, this.width, this.height, "center");
+			this.bitmap.drawText(text, 0, 0, this.bitmap.width, this.bitmap.height, "center");
+			this.sprite.width = this.bitmap.width;
+			this.sprite.height = this.bitmap.height;
 			this.sprite.move(x,y);
 		}
 		
 	}
-	var create_title = true;
 	var actor_xiaoshi = true;
 	var width = 816;
 	var height = 48;
@@ -98,26 +97,24 @@
     });
 	PluginManager.registerCommand('Fun_Actor_Title_Show', '定义文本内容', args => {
         $gameSystem._actor_title.data = args.message;
-	    create_title = true;
+		if($gameSystem._actor_title.data==""){
+			$gameSystem._actor_title.data = $gameParty.leader().nickname();
+		}
+		scene_title.bitmap.resize(getTextWidth($gameSystem._actor_title.data), height);
+		scene_title.Refresh($gamePlayer.GetScreenX() - scene_title.bitmap.width / 2, $gamePlayer.GetScreenY() - scene_title.bitmap.height*2 + 10, $gameSystem._actor_title.data);
     });
 	
 	function Create_Title(scene){
-		if(create_title){
-			one_show = true;
-		    actor_xiaoshi = true;
-			if($gameSystem._actor_title.data==""){
-				$gameSystem._actor_title.data = $gameParty.leader().nickname();
-			}
-			width = getTextWidth($gameSystem._actor_title.data);
-			if(scene_title != null){
-				scene.removeChild(scene_title.sprite);
-			}
-			scene_title = new Title_Name(width, height);
-            scene.addChild(scene_title.sprite);
-			create_title = false;
+		one_show = true;
+		actor_xiaoshi = true;
+	    if($gameSystem._actor_title.data==""){
+			$gameSystem._actor_title.data = $gameParty.leader().nickname();
 		}
+		width = getTextWidth($gameSystem._actor_title.data);
+		scene_title = new Title_Name(width, height);
+        scene.addChild(scene_title.sprite);
 	}
-	function Refresh_Title(scene){
+	function Refresh_Title(){
 		if($gamePlayer._transparent){
 			if(actor_xiaoshi){
 			    scene_title.bitmap.clear();
@@ -132,12 +129,12 @@
 			actor_xiaoshi = true;
 			//主角移动 刷新文本
 			if($gamePlayer.isMoving()){
-			    scene_title.Refresh($gamePlayer.GetScreenX() - width / 2, $gamePlayer.GetScreenY() - height*2 + 10, $gameSystem._actor_title.data);
+			    scene_title.Refresh($gamePlayer.GetScreenX() - scene_title.bitmap.width / 2, $gamePlayer.GetScreenY() - scene_title.bitmap.height*2 + 10, $gameSystem._actor_title.data);
 				return;
 			}
             //主角第一次出现 刷新一次文本
 			if(one_show){
-				scene_title.Refresh($gamePlayer.GetScreenX() - width / 2, $gamePlayer.GetScreenY() - height*2 + 10, $gameSystem._actor_title.data);
+				scene_title.Refresh($gamePlayer.GetScreenX() - scene_title.bitmap.width / 2, $gamePlayer.GetScreenY() - scene_title.bitmap.height*2 + 10, $gameSystem._actor_title.data);
 				one_show = false;
 			}
 		}else{
@@ -148,22 +145,20 @@
 		}
 	}
 
-	//=================== 保存原始的 Scene_Map.prototype.createSpriteset 方法==========================
-    const _Scene_Map_createSpriteset = Scene_Map.prototype.createSpriteset;
-    //=================== 重写 Scene_Map.prototype.createSpriteset 方法===============================
-    Scene_Map.prototype.createSpriteset = function() {
-        // 调用原始的 createSpriteset 方法
-        _Scene_Map_createSpriteset.call(this);
-		create_title = true;
-		scene_title=null;
+	//=================== 保存原始的 Scene_Map.prototype.createCharacters 方法==========================
+     const _Spriteset_Map_prototype_createCharacters = Spriteset_Map.prototype.createCharacters;
+    //=================== 重写 Scene_Map.prototype.createCharacters 方法===============================
+    Spriteset_Map.prototype.createCharacters = function() {
+        // 调用原始的 createCharacters 方法
+        _Spriteset_Map_prototype_createCharacters.call(this);
+		Create_Title(this);
     };
 	
-	//=================== 重写 Scene_Map 类的 update 方法==============================
-	const _Scene_Map_update = Scene_Map.prototype.update;
-	Scene_Map.prototype.update = function() {
-		_Scene_Map_update.call(this);
-		Create_Title(this);
-		Refresh_Title(this);
+	//=================== 重写 Spriteset_Map.prototype.update 方法==============================
+	const _Spriteset_Map_prototype_update = Spriteset_Map.prototype.update;
+	Spriteset_Map.prototype.update = function() {
+		_Spriteset_Map_prototype_update.call(this);
+		Refresh_Title();
 	};
 	// 保存原始方法
     const _SceneManager_goto = SceneManager.goto;

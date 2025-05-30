@@ -7,5 +7,5 @@ var $plugins =
 {"name":"XdRs_BubbleDialog","status":true,"description":"气泡对话框。","parameters":{}},
 {"name":"XdRs_AutomaticSpeaking","status":true,"description":"NPC自动说话 + 指定对象说话 （MV + MZ）。","parameters":{"windowskins":"","defaultDuration":"180","defaultWaitCount":" 360"}},
 {"name":"Fun_Actor_Title_Show","status":true,"description":"地图上主角头顶显示称号。","parameters":{}},
-{"name":"Fun_Event_Title_Show","status":true,"description":"地图上任意事件头顶显示称号。","parameters":{}}
+{"name":"Fun_Event_Title_Show","status":true,"description":"地图上任意事件头顶显示名字。","parameters":{}}
 ];
