@@ -90,7 +90,7 @@ $gameMap.mapId();                    当前地图的编号
 				arr.bitmap.clear();
 				continue;
 			}
-			var 是否去掉 = false;
+			let 是否去掉 = false;
 			//去掉要消除的ID
 			for(let arr_id of clear_id_array){
 				if(arr.id == arr_id){
@@ -130,6 +130,38 @@ $gameMap.mapId();                    当前地图的编号
 			aa.Refresh(aa.event.screenX() - aa.width / 2, aa.event.screenY() - 80);
 		}
 	}
+	function 删除所有(){
+		for(let aa of array){
+			aa.bitmap.clear();
+		}
+	}
+	function 事件自己移动更新(){
+		for (let arr of array ) {
+			//去掉不存在的ID
+			if(arr.event.isErased()){
+				arr.bitmap.clear();
+				continue;
+			}
+			let 是否去掉 = false;
+			//去掉要消除的ID
+			for(let arr_id of clear_id_array){
+				if(arr.id == arr_id){
+					arr.bitmap.clear();
+					是否去掉=true;
+					break;
+				}
+			}
+			if(是否去掉){
+				continue;
+			}
+			if(arr.event.isMoving()){
+				arr.bitmap.clear();
+			    if($gameSystem._event_title.for_show==true){
+				    arr.Refresh(arr.event.screenX() - arr.width / 2, arr.event.screenY() - 80);
+			    }	
+			}	
+		}
+	}
 	PluginManager.registerCommand('Fun_Event_Title_Show', '打开名字', () => {
         $gameSystem._event_title.for_show = true;
 		更新内容();
@@ -161,7 +193,6 @@ $gameMap.mapId();                    当前地图的编号
     };
 	//=================== 保存原始的 Spriteset_Map.prototype.createCharacters 方法==========================
     const _Spriteset_Map_prototype_createCharacters = Spriteset_Map.prototype.createCharacters;
-    //=================== 重写 Spriteset_Map.prototype.createCharacters 方法===============================
     Spriteset_Map.prototype.createCharacters = function() {
         // 调用原始的 createCharacters 方法
         _Spriteset_Map_prototype_createCharacters.call(this);
@@ -180,15 +211,25 @@ $gameMap.mapId();                    当前地图的编号
 		
     };
 	
-	//=================== 重写 Scene_Map 类的 update 方法==============================
+	//=================== 重写 Spriteset_Map.prototype.update 方法==============================
 	const _Spriteset_Map_prototype_update = Spriteset_Map.prototype.update;
 	Spriteset_Map.prototype.update = function() {
 		_Spriteset_Map_prototype_update.call(this);
 		//主角移动时刷新文本
 		if($gamePlayer.isMoving()){
 			更新内容();
+		}else{
+			事件自己移动更新();
 		}
 	};
+	//=================== 重写 SceneManager.push 方法==============================
+    const _SceneManager_push = SceneManager.push;
+    SceneManager.push = function(sceneClass) {
+        if (sceneClass === Scene_Battle) {
+			删除所有();
+        }
+		_SceneManager_push.call(this, sceneClass);
+    };
 	//=============================存档功能======================================
     const _Game_System_initialize = Game_System.prototype.initialize;
 	// 2. 重写初始化方法，声明自定义属性

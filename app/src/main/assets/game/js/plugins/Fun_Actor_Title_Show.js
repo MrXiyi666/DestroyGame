@@ -81,11 +81,11 @@
 		}
 		
 	}
-	var actor_xiaoshi = true;
-	var width = 816;
-	var height = 48;
-	var one_show = true;
-	var scene_title=null;
+	let actor_xiaoshi = true;
+	let width = 816;
+	let height = 48;
+	let one_show = true;
+	let scene_title=null;
 	//================================== 注册插件指令===========================
     PluginManager.registerCommand('Fun_Actor_Title_Show', '打开称号', () => {
 		one_show = true;
@@ -160,21 +160,12 @@
 		_Spriteset_Map_prototype_update.call(this);
 		Refresh_Title();
 	};
-	// 保存原始方法
-    const _SceneManager_goto = SceneManager.goto;
-	// 重写场景切换方法
-    SceneManager.goto = function(sceneClass) {
-        // 检查是否切换到战斗场景
-        if (sceneClass === Scene_Battle) {
-            // --------------------- 战斗前逻辑 ---------------------
-            scene_title.bitmap.clear(); // 自定义方法
-            // -----------------------------------------------------
-        }
-        
-        // 执行原始逻辑
-        _SceneManager_goto.call(this, sceneClass);
-    };
-	
+	//=================== 重写 Spriteset_Map.prototype.hideCharacters 方法==============================
+	const _Spriteset_Map_prototype_hideCharacters = Spriteset_Map.prototype.hideCharacters;
+	Spriteset_Map.prototype.hideCharacters = function() {
+	    _Spriteset_Map_prototype_hideCharacters.call(this);
+	    scene_title.bitmap.clear(); // 自定义方法
+	};
 	//=============================存档功能======================================
     const _Game_System_initialize = Game_System.prototype.initialize;
 	// 2. 重写初始化方法，声明自定义属性

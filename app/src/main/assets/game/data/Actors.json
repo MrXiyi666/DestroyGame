@@ -1,4 +1,4 @@
 [
 null,
-{"id":1,"battlerName":"xieyu_zhandou","characterIndex":0,"characterName":"xieyu","classId":1,"equips":[],"faceIndex":0,"faceName":"xieyu","traits":[{"code":11,"dataId":1,"value":1},{"code":31,"dataId":1,"value":1},{"code":51,"dataId":1,"value":1},{"code":52,"dataId":1,"value":1},{"code":63,"dataId":3,"value":1},{"code":62,"dataId":0,"value":1}],"initialLevel":1,"maxLevel":99,"name":"谢羽","nickname":"无双英雄","note":"","profile":"热爱武术的少年意外穿越到异世界 成为一名勇者"}
+{"id":1,"battlerName":"xieyu_zhandou","characterIndex":0,"characterName":"xieyu","classId":1,"equips":[],"faceIndex":0,"faceName":"xieyu","traits":[{"code":63,"dataId":3,"value":1},{"code":11,"dataId":8,"value":1},{"code":11,"dataId":9,"value":1},{"code":11,"dataId":10,"value":1},{"code":11,"dataId":1,"value":1},{"code":11,"dataId":2,"value":1},{"code":11,"dataId":3,"value":1},{"code":11,"dataId":4,"value":1},{"code":11,"dataId":5,"value":1},{"code":11,"dataId":6,"value":1},{"code":11,"dataId":7,"value":1}],"initialLevel":1,"maxLevel":99,"name":"谢羽","nickname":"无双英雄","note":"","profile":"热爱武术的少年意外穿越到异世界 成为一名勇者"}
 ]
