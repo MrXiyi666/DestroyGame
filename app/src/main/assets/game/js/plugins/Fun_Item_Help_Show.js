@@ -50,11 +50,6 @@ item.params[7]   幸运
         return 1; // 默认是2列，改为6列以显示更多物品
     };
 	
-    // 覆盖技能窗口的列数为1
-    //Window_SkillList.prototype.maxCols = function() {
-     //   return 1;
-    //};
-	
 	//=================== 保存原始的 Window_Help.prototype.setItem 方法==========================
     const _Window_Help_prototype_setItem = Window_Help.prototype.setItem;
 	Window_Help.prototype.setItem = function(item) {
@@ -98,5 +93,4 @@ item.params[7]   幸运
 		_Window_Base_Attributes_Help.refresh("");
 	
 	};
-	
 })();
