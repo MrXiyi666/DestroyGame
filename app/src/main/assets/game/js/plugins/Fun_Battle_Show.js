@@ -15,27 +15,46 @@
     Spriteset_Battle.prototype.createBattleback = function() {
         _Spriteset_Battle_createBattleback.call(this);
         // 设置远景背景透明度
-        this._back1Sprite.opacity = 150;
+        this._back1Sprite.opacity = 100;
         // 设置近景背景透明度
-        this._back2Sprite.opacity = 150;
+        this._back2Sprite.opacity = 100;
     };
-	
+	//=================== 保存原始的 indow_StatusBase.prototype.placeBasicGauges 方法==========================
+	const _Window_StatusBase_prototype_initialize = Window_StatusBase.prototype.initialize;
+	Window_StatusBase.prototype.initialize = function(rect) {
+		rect.y = rect.y + 40;
+        _Window_StatusBase_prototype_initialize.call(this, rect);
+    };
 	//如果是战斗界面 人物信息背景变成 0
 	//=================== 保存原始的 indow_StatusBase.prototype.placeBasicGauges 方法==========================
 	const _Window_StatusBase_prototype_placeBasicGauges = Window_StatusBase.prototype.placeBasicGauges;
     Window_StatusBase.prototype.placeBasicGauges = function(actor, x, y) {
         if (SceneManager._scene instanceof Scene_Battle) {
 			this.backOpacity = 0;
+			this.height = 160;
             return;
         }
 		_Window_StatusBase_prototype_placeBasicGauges.call(this, actor, x, y);
     };
-	//如果是战斗界面 人物信息背景变成 战斗界面 名字坐标修改
+	//战斗界面 名字坐标修改
 	//=================== 保存原始的 Window_StatusBase.prototype.placeActorName 方法==========================
 	const _Window_StatusBase_prototype_placeActorName = Window_StatusBase.prototype.placeActorName;
 	Window_StatusBase.prototype.placeActorName = function(actor, x, y) {
-	_Window_StatusBase_prototype_placeActorName.call(this, actor, x+40, y+30);
+		if (SceneManager._scene instanceof Scene_Battle) {
+			
+            return;
+        }
+	    _Window_StatusBase_prototype_placeActorName.call(this, actor, x, y);
 	};
+	//=================== 保存原始的 Window_StatusBase.prototype.drawActorFace 方法==========================
+	const _Window_StatusBase_prototype_drawActorFace = Window_StatusBase.prototype.drawActorFace;
+	Window_StatusBase.prototype.drawActorFace = function(actor, x, y, width, height) {
+		if (SceneManager._scene instanceof Scene_Battle) {
+			this.drawFace(actor.faceName(), actor.faceIndex(), x, y, width, height + 70);
+            return;
+        }
+		_Window_StatusBase_prototype_drawActorFace.call(this, actor, x, y, width, height);
+    };
 	//敌人出现文本消息
 	//=================== 保存原始的 BattleManager.displayStartMessages 方法==========================
 	const _BattleManager_displayStartMessages = BattleManager.displayStartMessages;
@@ -66,16 +85,39 @@
 			
         }
     };
+	// 物品窗口坐标修改
+	const _Window_BattleItem_prototype_initialize = Window_BattleItem.prototype.initialize;
+	Window_BattleItem.prototype.initialize = function(rect) {
+		rect.x = 408;
+		rect.width = 408;
+		rect.height = 360;
+        _Window_BattleItem_prototype_initialize.call(this, rect);
+    };
+	// 保存原始方法  物品窗口 一列
+    const _Window_BattleItem_maxCols = Window_BattleItem.prototype.maxCols;
+    Window_BattleItem.prototype.maxCols = function() {
+        return 1; // 单列显示
+    };
+	
+	
 	//创建战斗准备窗口
 	//=================== 保存原始的 Scene_Battle.prototype.createAllWindows 方法==========================
 	const _Scene_Battle_prototype_createAllWindows= Scene_Battle.prototype.createAllWindows;
 	Scene_Battle.prototype.createAllWindows = function(){
 		_Scene_Battle_prototype_createAllWindows.call(this);
-		//this._skillWindow.backOpacity = 0;
-		//this._skillWindow.frameVisible = false;
-		//this._itemWindow.backOpacity = 0;
-		//this._itemWindow.frameVisible = false;
-		this._actorCommandWindow.y = 120;
+		this._partyCommandWindow.backOpacity = 0;
+		this._partyCommandWindow.frameVisible = false;
+		this._actorCommandWindow.backOpacity = 0;
+		this._actorCommandWindow.frameVisible = false;
+		this._skillWindow.backOpacity = 0;
+		this._skillWindow.frameVisible = false;
+		this._itemWindow.backOpacity = 0;
+		this._itemWindow.frameVisible = false;
+		this._itemWindow._helpWindow.backOpacity = 0;
+		this._itemWindow._helpWindow.frameVisible = false;
+		this._enemyWindow.backOpacity = 0;
+		this._enemyWindow.frameVisible = false;
+		this._actorCommandWindow.y = 208;
 		this._skillWindow.y=100;
 		this._itemWindow.y=100;
 	}
@@ -88,10 +130,10 @@
 	};
 	//角色命令窗口
 	Scene_Battle.prototype.actorCommandWindowRect = function() {
-        const ww = 308;//192;
-        const wh = 245;//this.windowAreaHeight();
-        const wx = 254;//this.isRightInputMode() ? Graphics.boxWidth - ww : 0;
-        const wy = 0;//Graphics.boxHeight - wh;
+        const ww = 312;
+        const wh = 245;
+        const wx = 500;
+        const wy = 0;
         return new Rectangle(wx, wy, ww, wh);
     };
 	//敌人选择窗口
@@ -99,15 +141,15 @@
         const wx = this._statusWindow.x;
         const ww = 808;//this._statusWindow.width;
         const wh = this.windowAreaHeight();
-        const wy = Graphics.boxHeight - wh;
+        const wy = 450;//Graphics.boxHeight - wh;
         return new Rectangle(wx, wy, ww, wh);
     };
 	//队伍命令窗口
 	Scene_Battle.prototype.partyCommandWindowRect = function() {
-        const ww = 192;
-        const wh = 115;//this.windowAreaHeight();
-        const wx = 308;//this.isRightInputMode() ? Graphics.boxWidth - ww : 0;
-        const wy = 220;//Graphics.boxHeight - wh;
+        const ww = 312;
+        const wh = 115;
+        const wx = 500;
+        const wy = 340;
         return new Rectangle(wx, wy, ww, wh);
     };
 	//技能选择窗口

@@ -81,7 +81,7 @@ Jp.enemy_hp = Sprite_Enemy.prototype.setBattler;
 Sprite_Enemy.prototype.setBattler = function (battler) {
 	Jp.enemy_hp.call(this, battler);
 	if(Jp.battle_hp.enemy_hp[0]=='true'){
-		this.battler_hp = new Jp_battle_hp(battler);
+		this.battler_hp = new Jp_battle_hp(battler, 200);
 		if(Imported.YEP_X_AnimatedSVEnemies = true){//mV版本兼容yep侧视图
 			if(this._svBattlerEnabled) {
 				this.battler_hp.rotation *= -1;
@@ -113,7 +113,7 @@ Sprite_Actor.prototype.setBattler = function(battler) {
 	Jp.Actor_hp_setBattler.call(this,battler);
 	if(Jp.battle_hp.player_hp[0]=='true'){
 		if(this.Actor_hp) this.removeChild(this.Actor_hp);
-		this.Actor_hp = new Jp_battle_hp(battler);
+		this.Actor_hp = new Jp_battle_hp(battler, 100);
 		this.Actor_hp.move(Jp.battle_hp.player_hp[1],Jp.battle_hp.player_hp[2]);
 		this.addChild(this.Actor_hp);
 		this._stateIconSprite2.setup(battler);
@@ -157,8 +157,9 @@ Jp_battle_hp.prototype = Object.create(Sprite.prototype);
 Jp_battle_hp.prototype.constructor = Jp_battle_hp;
 //==============================
 //初始化设置
-Jp_battle_hp.prototype.initialize = function(actor) {
+Jp_battle_hp.prototype.initialize = function(actor, width) {
 	Sprite.prototype.initialize.call(this);
+	this.width = width;
 	this.drawHp(actor);//
 }
 
@@ -177,29 +178,29 @@ Jp_battle_hp.prototype.drawHp =function(actor){
 	this.color_mp = '#00ffff';
 	var x = 0;
 	var y = 0;
-	this.battle_hp = new Sprite(new Bitmap(100, 50));
+	this.battle_hp = new Sprite(new Bitmap(this.width, 50));
 	this.battle_hp.move(-50,0);
 	this.battle_hp.bitmap.fontSize = 12;
 	this.battle_hp.bitmap.fontFace = $gameSystem.mainFontFace();//mz版本的字体
-	this.battle_hp.bitmap.fillRect(x, y, 100, 10,this.color_bg);
-	this.battle_hp.bitmap.fillRect(x + 1, y + 1, 98 * Hp/Mhp, 8,this.color_hp);
-	this.battle_hp.bitmap.fillRect(x, y+12, 100, 10,this.color_bg);
-	this.battle_hp.bitmap.fillRect(x + 1, y + 13, 98 * Mp/Mmp, 8,this.color_mp);
+	this.battle_hp.bitmap.fillRect(x, y, this.width, 10,this.color_bg);
+	this.battle_hp.bitmap.fillRect(x + 1, y + 1, (this.width-2) * Hp/Mhp, 8,this.color_hp);
+	this.battle_hp.bitmap.fillRect(x, y+12, this.width, 10,this.color_bg);
+	this.battle_hp.bitmap.fillRect(x + 1, y + 13, (this.width-2) * Mp/Mmp, 8,this.color_mp);
 	if(Mhp>=10000){
 		var text_hp = Hp;
 	}else var text_hp = Hp + '/' + Mhp;
 	if(Mmp>=10000){
 		var text_mp = Mp;
 	}else var text_mp = Mp + '/' + Mmp;
-	this.battle_hp.bitmap.drawText(text_hp, x, y - 20, 100, 50,'center');
-	this.battle_hp.bitmap.drawText(text_mp, x, y - 7, 100, 50, 'center')
+	this.battle_hp.bitmap.drawText(text_hp, x, y - 20, this.width, 50,'center');
+	this.battle_hp.bitmap.drawText(text_mp, x, y - 7, this.width, 50, 'center')
 	this.addChild(this.battle_hp);
 	var text_name = this.actor.name();
-	this.battle_name = new Sprite(new Bitmap(100, 50));
+	this.battle_name = new Sprite(new Bitmap(this.width, 50));
 	this.battle_name.move(-50,-40);
 	this.battle_name.bitmap.fontSize = 18;
 	this.battle_name.bitmap.fontFace = $gameSystem.mainFontFace();//mz版本的字体
-	this.battle_name.bitmap.drawText(text_name, x, y, 100, 50,'center');
+	this.battle_name.bitmap.drawText(text_name, x, y, this.width, 50,'center');
 	this.addChild(this.battle_name);
 };
 
@@ -212,18 +213,18 @@ Jp_battle_hp.prototype.Jp_refresh_hp = function() {
 	var Mp = this.actor.mp;
 	var x = 0;
 	var y = 0;
-	this.battle_hp.bitmap.fillRect(x, y, 100, 10,this.color_bg);
-	this.battle_hp.bitmap.fillRect(x + 1, y + 1, 98 * Hp/Mhp, 8,this.color_hp);
-	this.battle_hp.bitmap.fillRect(x, y+12, 100, 10,this.color_bg);
-	this.battle_hp.bitmap.fillRect(x + 1, y + 13, 98 * Mp/Mmp, 8,this.color_mp);
+	this.battle_hp.bitmap.fillRect(x, y, this.width, 10,this.color_bg);
+	this.battle_hp.bitmap.fillRect(x + 1, y + 1, (this.width-2) * Hp/Mhp, 8,this.color_hp);
+	this.battle_hp.bitmap.fillRect(x, y+12, this.width, 10,this.color_bg);
+	this.battle_hp.bitmap.fillRect(x + 1, y + 13, (this.width-2) * Mp/Mmp, 8,this.color_mp);
 	if(Mhp>=10000){
 		var text_hp = Hp;
 	}else var text_hp = Hp + '/' + Mhp;
 	if(Mmp>=10000){
 		var text_mp = Mp;
 	}else var text_mp = Mp + '/' + Mmp;
-	this.battle_hp.bitmap.drawText(text_hp, x, y-20, 100, 50, 'center');
-	this.battle_hp.bitmap.drawText(text_mp, x, y - 7, 100, 50, 'center');
+	this.battle_hp.bitmap.drawText(text_hp, x, y-20, this.width, 50, 'center');
+	this.battle_hp.bitmap.drawText(text_mp, x, y - 7, this.width, 50, 'center');
 };
 ////*刷新名字
 Jp_battle_hp.prototype.Jp_refresh_name = function() {
@@ -231,7 +232,7 @@ Jp_battle_hp.prototype.Jp_refresh_name = function() {
 	var text_name = this.actor.name();
 	var x = 0;
 	var y = 0;
-	this.battle_name.bitmap.drawText(text_name, x, y, 100, 50,'center');
+	this.battle_name.bitmap.drawText(text_name, x, y, this.width, 50,'center');
 };	
 //更新窗口信息
 Jp_battle_hp.prototype.update = function() {
