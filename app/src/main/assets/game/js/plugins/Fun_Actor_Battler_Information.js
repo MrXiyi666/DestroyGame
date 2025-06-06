@@ -7,7 +7,6 @@
 * @author 希夷先生
 */
 (() => {
-	let _Actor_Battler_Information=null;
 	//定义血条
     function Actor_Battler_Information() {
         this.initialize.apply(this, arguments)
@@ -32,6 +31,7 @@
 		this.sprite = new Sprite(this.bitmap); 
 		this._actor = actor;
 	    this.addChild(this.sprite);
+		this.move(160, 8);
 		
     }
 	
@@ -56,25 +56,21 @@
 	Actor_Battler_Information.prototype.update = function() {
 		this.refresh();
 	}
-	
-	const _Scene_Map_prototype_create = Scene_Map.prototype.create;
-	Scene_Map.prototype.create = function() {
-	    _Scene_Map_prototype_create.call(this);
-		_Actor_Battler_Information=null;
-	}
 	const _Window_StatusBase_prototype_placeBasicGauges = Window_StatusBase.prototype.placeBasicGauges;
 	Window_StatusBase.prototype.placeBasicGauges = function(actor, x, y) {
 		_Window_StatusBase_prototype_placeBasicGauges.call(this, actor, x, y);
-		
 	    if (!(SceneManager._scene instanceof Scene_Battle)) {
-			_Actor_Battler_Information=null;
 		    return;
 		}
-		if(_Actor_Battler_Information){
-			return;
-		}
-		_Actor_Battler_Information = new Actor_Battler_Information(actor, this.width+20, this.height-16);
-		this.addChild(_Actor_Battler_Information);
-		_Actor_Battler_Information.move(160, 8);
+		for (const child of this.children) {
+            if (child instanceof Actor_Battler_Information) {
+                this.removeChild(child);
+           }
+        }
+		this.addChild(new Actor_Battler_Information(actor, this.width+20, this.height-16));
 	};
+	
+	Scene_Battle.prototype.updateStatusWindowPosition = function() {
+   
+    };
 })();

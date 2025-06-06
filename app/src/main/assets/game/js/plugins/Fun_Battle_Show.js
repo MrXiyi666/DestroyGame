@@ -22,7 +22,9 @@
 	//=================== 保存原始的 indow_StatusBase.prototype.placeBasicGauges 方法==========================
 	const _Window_StatusBase_prototype_initialize = Window_StatusBase.prototype.initialize;
 	Window_StatusBase.prototype.initialize = function(rect) {
-		rect.y = rect.y + 40;
+		if (SceneManager._scene instanceof Scene_Battle) {
+			rect.y = rect.y + 40;
+		}
         _Window_StatusBase_prototype_initialize.call(this, rect);
     };
 	//如果是战斗界面 人物信息背景变成 0
