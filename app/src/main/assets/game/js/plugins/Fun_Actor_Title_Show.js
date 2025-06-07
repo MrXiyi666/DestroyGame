@@ -15,162 +15,94 @@
  * @text 关闭称号
  * @desc 关闭称号文本
  *
- * @command 定义文本内容
- * @text 定义文本内容
- * @desc 随机定义想要显示的文本内容 如果为空 那么就显示称号
- 
- * @arg message
- * @text 定义文本
- * @desc 要定义的具体文本内容
- * @type string
- * @default 
 */
+
 (() => {
-	// 可以添加一个辅助方法来判断某个具体角色是否移动
-    function isCharacterMoving(character) {
-        if (character instanceof Game_Character) {
-            return character.isMoving();
-        }
-        return false;
+	//创建一个精灵用于显示内容
+	function Actor_Name_Title() {
+        this.initialize();
+    };
+
+    Actor_Name_Title.prototype = Object.create(Sprite.prototype);
+    Actor_Name_Title.prototype.constructor = Actor_Name_Title;
+	
+	//初始化设置
+    Actor_Name_Title.prototype.initialize = function() {
+	    Sprite.prototype.initialize.call(this);
+		this.bitmap = new Bitmap(this.width, this.height);
+		this.bitmap.fontFace = $gameSystem.mainFontFace();
+        this.bitmap.fontSize = $gameSystem.mainFontSize();
+		this.bitmap.outlineColor = ColorManager.outlineColor();
+		this.bitmap.textColor = ColorManager.normalColor();
+		this.bitmap.smooth = true;
+		this.bitmap.outlineWidth = 3;
+		this.bitmap.paintOpacity = 255;
+		this.refresh();
+		
     }
 	
-	//Game_Player 类 添加新方法 获取屏幕坐标 X
-    Game_Player.prototype.GetScreenX = function() {
-	    if($gameParty && $gameParty.leader()){
-		    return this.screenX();
-	    }else{
-			return 0;
+	Actor_Name_Title.prototype.refresh = function() {
+		this.bitmap.clear();
+		if(!$gameSystem._actor_title.for_show){
+			//如果开关为关闭 则代码不执行
+			return;
 		}
-    };
-    
-	//Game_Player 类 添加新方法 获取屏幕坐标 X
-    Game_Player.prototype.GetScreenY = function() {
-	    if($gameParty && $gameParty.leader()){
-		    return this.screenY();
-	    }else{
-			return 0;
-		}
-    };
-	// 创建一个临时 Bitmap 用于测量文本宽度
-    function getTextWidth(text) {
-        const bitmap = new Bitmap(1, 1);
-		bitmap.fontSize = $gameSystem.mainFontSize();
-		bitmap.fontFace = $gameSystem.mainFontFace();
-        return bitmap.measureTextWidth(text);
-    }
+		this.text = $gameParty.leader().nickname();
+		this.bitmap.resize(this.bitmap.measureTextWidth(this.text), $gameSystem.mainFontSize());
+		this.bitmap.drawText(this.text, 0, 0, this.bitmap.width, this.bitmap.height, "center");
+		this.width = this.bitmap.width;
+		this.height = this.bitmap.height;
+		this.move(0-this.width/2, 0-this.height*2.8);
+	};
 	
-	class Title_Name{
-		constructor( width, height) {
-			this.bitmap = new Bitmap(width, height);
-			this.bitmap.fontFace = $gameSystem.mainFontFace();
-            this.bitmap.fontSize = $gameSystem.mainFontSize();
-			this.bitmap.outlineColor = ColorManager.outlineColor();
-			this.bitmap.textColor = ColorManager.normalColor();
-			this.bitmap.smooth = true;
-			this.bitmap.outlineWidth = 3;
-			this.bitmap.paintOpacity = 255;
-			this.sprite = new Sprite(this.bitmap); 
-		}
-		
-		Refresh(x, y, text){
-			this.bitmap.clear();
-			this.bitmap.drawText(text, 0, 0, this.bitmap.width, this.bitmap.height, "center");
-			this.sprite.width = this.bitmap.width;
-			this.sprite.height = this.bitmap.height;
-			this.sprite.move(x,y);
-		}
-		
-	}
-	let actor_xiaoshi = true;
-	let width = 816;
-	let height = 48;
-	let one_show = true;
-	let scene_title=null;
+	
 	//================================== 注册插件指令===========================
     PluginManager.registerCommand('Fun_Actor_Title_Show', '打开称号', () => {
-		one_show = true;
-		$gameSystem._actor_title.bool = true;
+		$gameSystem._actor_title.for_show = true;
+		for(let _data of _array){
+		    _data.refresh();	
+		}
     });
 
     PluginManager.registerCommand('Fun_Actor_Title_Show', '关闭称号', () => {
-		$gameSystem._actor_title.bool = false;
-    });
-	PluginManager.registerCommand('Fun_Actor_Title_Show', '定义文本内容', args => {
-        $gameSystem._actor_title.data = args.message;
-		if($gameSystem._actor_title.data==""){
-			$gameSystem._actor_title.data = $gameParty.leader().nickname();
+		$gameSystem._actor_title.for_show = false;
+		for(let _data of _array){
+		    _data.refresh();	
 		}
-		scene_title.bitmap.resize(getTextWidth($gameSystem._actor_title.data), height);
-		scene_title.Refresh($gamePlayer.GetScreenX() - scene_title.bitmap.width / 2, $gamePlayer.GetScreenY() - scene_title.bitmap.height*2 + 10, $gameSystem._actor_title.data);
     });
 	
-	function Create_Title(scene){
-		one_show = true;
-		actor_xiaoshi = true;
-	    if($gameSystem._actor_title.data==""){
-			$gameSystem._actor_title.data = $gameParty.leader().nickname();
-		}
-		width = getTextWidth($gameSystem._actor_title.data);
-		scene_title = new Title_Name(width, height);
-        scene.addChild(scene_title.sprite);
-	}
-	function Refresh_Title(){
-		if($gamePlayer._transparent){
-			if(actor_xiaoshi){
-			    scene_title.bitmap.clear();
-				actor_xiaoshi = false;
-			}
-			if(one_show==false){
-				one_show = true;
-			}
-			return;
-		}
-        if($gameSystem._actor_title.bool){
-			actor_xiaoshi = true;
-			//主角移动 刷新文本
-			if($gamePlayer.isMoving()){
-			    scene_title.Refresh($gamePlayer.GetScreenX() - scene_title.bitmap.width / 2, $gamePlayer.GetScreenY() - scene_title.bitmap.height*2 + 10, $gameSystem._actor_title.data);
-				return;
-			}
-            //主角第一次出现 刷新一次文本
-			if(one_show){
-				scene_title.Refresh($gamePlayer.GetScreenX() - scene_title.bitmap.width / 2, $gamePlayer.GetScreenY() - scene_title.bitmap.height*2 + 10, $gameSystem._actor_title.data);
-				one_show = false;
-			}
-		}else{
-			if(actor_xiaoshi){
-			    scene_title.bitmap.clear();
-				actor_xiaoshi = false;
-			}
-		}
-	}
-
-	//=================== 保存原始的 Scene_Map.prototype.createCharacters 方法==========================
-     const _Spriteset_Map_prototype_createCharacters = Spriteset_Map.prototype.createCharacters;
-    //=================== 重写 Scene_Map.prototype.createCharacters 方法===============================
-    Spriteset_Map.prototype.createCharacters = function() {
-        // 调用原始的 createCharacters 方法
-        _Spriteset_Map_prototype_createCharacters.call(this);
-		Create_Title(this);
-    };
-	
-	//=================== 重写 Spriteset_Map.prototype.update 方法==============================
-	const _Spriteset_Map_prototype_update = Spriteset_Map.prototype.update;
-	Spriteset_Map.prototype.update = function() {
-		_Spriteset_Map_prototype_update.call(this);
-		Refresh_Title();
-	};
-	//=================== 重写 Spriteset_Map.prototype.hideCharacters 方法==============================
-	const _Spriteset_Map_prototype_hideCharacters = Spriteset_Map.prototype.hideCharacters;
-	Spriteset_Map.prototype.hideCharacters = function() {
-	    _Spriteset_Map_prototype_hideCharacters.call(this);
-	    scene_title.bitmap.clear(); // 自定义方法
-	};
 	//=============================存档功能======================================
     const _Game_System_initialize = Game_System.prototype.initialize;
 	// 2. 重写初始化方法，声明自定义属性
     Game_System.prototype.initialize = function() {
         _Game_System_initialize.call(this);
-        this._actor_title = { data: "", bool: true }; // 初始化自定义属性（避免 undefined）
+        this._actor_title = { data: "", for_show: true }; // 初始化自定义属性（避免 undefined）
     };
+	
+	let _array = [];//所有事件的精灵数组
+	const _Spriteset_Map_prototype_createCharacters = Spriteset_Map.prototype.createCharacters;
+	Spriteset_Map.prototype.createCharacters = function() {
+		_array.length = 0;//初始化数组
+		_Spriteset_Map_prototype_createCharacters.call(this);
+	};
+	
+	const _Sprite_Character_prototype_setCharacter = Sprite_Character.prototype.setCharacter;
+	Sprite_Character.prototype.setCharacter = function(character) {
+        _Sprite_Character_prototype_setCharacter.call(this, character);
+		if (!(character instanceof Game_Player)) {
+			//判断是否为事件 如果不是则返回
+		    return;
+		}
+		let _data = new Actor_Name_Title();
+		_array.push(_data);//保存精灵的引用
+		this.addChild(_data);//添加精灵到当前事件
+    };
+    const _Game_Interpreter_prototype_command324 = Game_Interpreter.prototype.command324;
+    Game_Interpreter.prototype.command324 = function(params) {
+	    _Game_Interpreter_prototype_command324.call(this, params);
+		for(let _data of _array){
+		    _data.refresh();	
+		}
+        return true;	
+	};
 })();

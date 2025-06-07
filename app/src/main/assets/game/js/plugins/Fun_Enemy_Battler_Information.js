@@ -28,9 +28,7 @@
 		this.bitmap.smooth = true;
 		this.bitmap.outlineWidth = 3;
 		this.bitmap.paintOpacity = 255;
-		this.sprite = new Sprite(this.bitmap); 
 		this._enemy=null;
-		this.addChild(this.sprite);
 		this.isClear = false;
     }
 	Enemy_Battler_Information.prototype.refresh = function() {
@@ -43,13 +41,11 @@
 		this.bitmap.drawText(this._enemy.name(), 0, 0, this.width, this.frome_height, "center");
 		this.bitmap.drawText("生命值：" + this._enemy.hp + "/" + this._enemy.mhp, 10, this.bitmap.fontSize*2, this.width, this.frome_height, "left");
 		this.bitmap.drawText("灵力值：" + this._enemy.mp + "/" + this._enemy.mmp, 10, this.bitmap.fontSize*3, this.width, this.frome_height, "left");
-		this.datas = this._enemy.enemy().note.split("，");
+		this.datas = this._enemy.enemy().note.split("，"); //敌人信息备注
 		this.bitmap.drawText("属性：" + this.datas[0], 10, this.bitmap.fontSize*4, this.width, this.frome_height, "left");
 		this.bitmap.drawText("弱点：" + this.datas[1], 10, this.bitmap.fontSize*5, this.width, this.frome_height, "left");
 		this.bitmap.drawText("抗性：" + this.datas[2], 10, this.bitmap.fontSize*6, this.width, this.frome_height, "left");
 		this.bitmap.drawText("技能：" + this.datas[3], 10, this.bitmap.fontSize*7, this.width, this.frome_height, "left");
-		this.sprite.width = this.width;
-		this.sprite.height = this.height;
 		this.move(0-this.width/2, 0-this.height);
 	}
 

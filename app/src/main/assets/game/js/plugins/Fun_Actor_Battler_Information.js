@@ -28,16 +28,14 @@
 		this.bitmap.smooth = true;
 		this.bitmap.outlineWidth = 3;
 		this.bitmap.paintOpacity = 255;
-		this.sprite = new Sprite(this.bitmap); 
 		this._actor = actor;
-	    this.addChild(this.sprite);
 		this.move(160, 8);
 		
     }
 	
 	Actor_Battler_Information.prototype.refresh = function() {
 		this.bitmap.clear();
-		this.bitmap.fillAll("rgba(0,0,0,0.2)");
+		this.bitmap.fillAll(ColorManager.outlineColor());
 		let x=10;
 		let y=10;
 		//百分比计算

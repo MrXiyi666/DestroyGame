@@ -19,7 +19,7 @@
         // 设置近景背景透明度
         this._back2Sprite.opacity = 100;
     };
-	//=================== 保存原始的 indow_StatusBase.prototype.placeBasicGauges 方法==========================
+	//=================== 保存原始的 Window_StatusBase.prototype.initialize 方法==========================
 	const _Window_StatusBase_prototype_initialize = Window_StatusBase.prototype.initialize;
 	Window_StatusBase.prototype.initialize = function(rect) {
 		if (SceneManager._scene instanceof Scene_Battle) {
@@ -27,8 +27,7 @@
 		}
         _Window_StatusBase_prototype_initialize.call(this, rect);
     };
-	//如果是战斗界面 人物信息背景变成 0
-	//=================== 保存原始的 indow_StatusBase.prototype.placeBasicGauges 方法==========================
+	//=================== 保存原始的 Window_StatusBase.prototype.placeBasicGauges 方法==========================
 	const _Window_StatusBase_prototype_placeBasicGauges = Window_StatusBase.prototype.placeBasicGauges;
     Window_StatusBase.prototype.placeBasicGauges = function(actor, x, y) {
         if (SceneManager._scene instanceof Scene_Battle) {

@@ -2,240 +2,169 @@
 // Fun_Event_Title_Show.js
 //=================================================================================================
 /*:
-* @target MZ
-* @plugindesc 地图上任意事件头顶显示名字。
-* @author 希夷先生
-* @help
+ * @target MZ
+ * @plugindesc 地图上任意事件头顶显示名字。
+ * @author 希夷先生
  *
+ * @help
+ * 插件功能：在地图上的事件头顶显示自定义名字
+ * 
+ * 使用方法：
+ * 1. 在事件中插入脚本命令调用插件功能
+ * 2. 可通过插件命令控制名字的显示与隐藏
+ * 
+ * 插件命令：
+ * 1. 打开名字 - 打开当前事件的名字显示
+ * 2. 关闭名字 - 关闭当前事件的名字显示
+ * 3. 关闭指定编号名字 - 关闭指定事件ID的名字显示
+ * 4. 修改指定编号名字 - 修改指定事件ID的名字内容
+ * 
  * @command 打开名字
  * @text 打开名字
- * @desc 打开名字文本
+ * @desc 打开当前事件的名字显示
  * 
  * @command 关闭名字
  * @text 关闭名字
- * @desc 关闭名字文本
- *
+ * @desc 关闭当前事件的名字显示
+ * 
  * @command 关闭指定编号名字
  * @text 关闭指定编号名字
- * @desc 关闭指定编号名字
- *
+ * @desc 关闭指定事件ID的名字显示
+ * 
  * @arg id
- * @text 编号
- * @desc 要关闭的编号
+ * @text 事件ID
+ * @desc 要关闭名字显示的事件ID (0=玩家)
  * @type number
- *
+ * @min 0
+ * @default 0
+ * 
  * @command 修改指定编号名字
  * @text 修改指定编号名字
- * @desc 修改指定编号名字
- *
- * @arg re_id
- * @text 要需改的编号
- * @desc 要需改的编号
+ * @desc 修改指定事件ID的名字显示内容
+ * 
+ * @arg id
+ * @text 事件ID
+ * @desc 要修改名字的事件ID
  * @type number
- *
- * @arg re_data
- * @text 修改的值
- * @desc 修改的值
+ * @min 0
+ * @default 0
+ * 
+ * @arg data
+ * @text 名字内容
+ * @desc 要显示的名字文本内容
  * @type string
- *
-*/
-/*
-$gameMap.event(eventId).screenX();   事件的X坐标
-$gameMap.event(eventId).screenY()    事件的Y坐标
-$gameMap.event(eventId).isMoving()   是否在移动
-$gameMap.events().length             一共有多少个事件 用于遍历
-$gameMap.event(eventId).event().name 某个事件的名字
-$gameMap.event(eventId).isErased()   某事件是否被消除
-$gameMap.mapId();                    当前地图的编号    
+ * @default 事件名称
 */
 (() => {
-    // 创建一个临时 Bitmap 用于测量文本宽度
-    function getTextWidth(text) {
-        const bitmap = new Bitmap(1, 1);
-		bitmap.fontSize = $gameSystem.mainFontSize();
-		bitmap.fontFace = $gameSystem.mainFontFace();
-        return bitmap.measureTextWidth(text);
-    }
-    class Event_Title{
-		constructor(event) {
-			this.event = event;
-			this.text = event.event().name;
-			this.id = event.eventId();
-			this.width = getTextWidth(this.text);
-			this.height = 48;
-			this.bitmap = new Bitmap(this.width, this.height);
-			this.bitmap.fontFace = $gameSystem.mainFontFace();
-            this.bitmap.fontSize = $gameSystem.mainFontSize();
-			this.bitmap.outlineColor = ColorManager.outlineColor();
-			this.bitmap.textColor = ColorManager.normalColor();
-			this.bitmap.smooth = true;
-			this.bitmap.outlineWidth = 3;
-			this.bitmap.paintOpacity = 255;
-			this.sprite = new Sprite(this.bitmap); 
-			
-		}
-		Refresh(x, y){
-			this.bitmap.clear();
-			this.bitmap.drawText(this.text, 0, 0, this.width, this.height, "center");
-			this.sprite.width = this.width;
-			this.sprite.height = this.height;
-			this.sprite.move(x,y);
-		}
-	}
+    //创建一个精灵用于显示内容
+	function Event_Name_Title(event) {
+        this.initialize(event);
+    };
+
+    Event_Name_Title.prototype = Object.create(Sprite.prototype);
+    Event_Name_Title.prototype.constructor = Event_Name_Title;
 	
-	function 更新内容(){
-		for (let arr of array ) {
-			//去掉不存在的ID
-			if(arr.event.isErased()){
-				arr.bitmap.clear();
-				continue;
-			}
-			let 是否去掉 = false;
-			//去掉要消除的ID
-			for(let arr_id of clear_id_array){
-				if(arr.id == arr_id){
-					arr.bitmap.clear();
-					是否去掉=true;
-					break;
-				}
-			}
-			if(是否去掉){
-				continue;
-			}
-			arr.bitmap.clear();
-			if($gameSystem._event_title.for_show==true){
-				arr.Refresh(arr.event.screenX() - arr.width / 2, arr.event.screenY() - 80);
-			}			
+	//初始化设置
+    Event_Name_Title.prototype.initialize = function(event) {
+	    Sprite.prototype.initialize.call(this);
+		this.event = event;
+		this.text = event.event().name;
+		this.id = event.eventId();
+		this.bitmap = new Bitmap(0, 0);
+		this.bitmap.fontFace = $gameSystem.mainFontFace();
+        this.bitmap.fontSize = $gameSystem.mainFontSize();
+		this.bitmap.outlineColor = ColorManager.outlineColor();
+		this.bitmap.textColor = ColorManager.normalColor();
+		this.bitmap.smooth = true;
+		this.bitmap.outlineWidth = 3;
+		this.bitmap.paintOpacity = 255;
+		this.refresh();
+    }
+	
+	Event_Name_Title.prototype.refresh = function() {
+		this.bitmap.clear();
+		if(!$gameSystem._event_title.for_show){
+			//如果开关为关闭 则代码不执行
+			return;
 		}
-	}
-	function 删除指定编号(){
-		for (let arr of array ) {
-			//去掉要消除的ID
-			for(let arr_id of clear_id_array){
-				if(arr.id == arr_id){
-					arr.bitmap.clear();
-					break;
-				}
-			}
-		}
-	}
-	function 修改指定编号文本(id, data){
-		for(let aa of array){
-			if(id != aa.id){
-				continue;
-			}
-			aa.text = data;
-			aa.width = getTextWidth(aa.text);
-			aa.bitmap.resize(aa.width, aa.height);
-			aa.Refresh(aa.event.screenX() - aa.width / 2, aa.event.screenY() - 80);
-		}
-	}
-	function 删除所有(){
-		for(let aa of array){
-			aa.bitmap.clear();
-		}
-	}
-	function 事件自己移动更新(){
-		for (let arr of array ) {
-			//去掉不存在的ID
-			if(arr.event.isErased()){
-				arr.bitmap.clear();
-				continue;
-			}
-			let 是否去掉 = false;
-			//去掉要消除的ID
-			for(let arr_id of clear_id_array){
-				if(arr.id == arr_id){
-					arr.bitmap.clear();
-					是否去掉=true;
-					break;
-				}
-			}
-			if(是否去掉){
-				continue;
-			}
-			if(arr.event.isMoving()){
-				arr.bitmap.clear();
-			    if($gameSystem._event_title.for_show==true){
-				    arr.Refresh(arr.event.screenX() - arr.width / 2, arr.event.screenY() - 80);
-			    }	
-			}	
-		}
-	}
+		this.bitmap.resize(this.bitmap.measureTextWidth(this.text), $gameSystem.mainFontSize());
+		this.bitmap.drawText(this.text, 0, 0, this.bitmap.width, this.bitmap.height, "center");
+		this.width = this.bitmap.width;
+		this.height = this.bitmap.height;
+		//修改自身坐标为宽度的一半 高度在事件顶部
+		this.move(0-this.width/2, 0-this.height*2.8);
+	};
+	//清除当前事件文本内容
+	Event_Name_Title.prototype.clear = function() {
+		this.bitmap.clear();
+	};
+	//设置新的文本内容
+	Event_Name_Title.prototype.setText = function(_text) {
+		this.text = _text;
+		this.refresh();
+	};
+	
 	PluginManager.registerCommand('Fun_Event_Title_Show', '打开名字', () => {
         $gameSystem._event_title.for_show = true;
-		更新内容();
+		for(let _data_id of _array){
+			_data_id.refresh();
+		}
     });
 
     PluginManager.registerCommand('Fun_Event_Title_Show', '关闭名字', () => {
 	    $gameSystem._event_title.for_show = false;
-		更新内容();
+		for(let _data_id of _array){
+			_data_id.refresh();
+		}
     });
 	
 	PluginManager.registerCommand('Fun_Event_Title_Show', '关闭指定编号名字', args => {
-		clear_id_array.push(args.id);
-		删除指定编号();
+		if(args.id<=0){
+			return;
+		}
+		//遍历到指定精灵 并且清除
+		for(let _data of _array){
+			if(_data.id == parseInt(args.id)){
+				_data.clear();
+				return;
+			}
+		}
     });
 	PluginManager.registerCommand('Fun_Event_Title_Show', '修改指定编号名字', args => {
-		修改指定编号文本(args.re_id, args.re_data);
-    });
-	
-    // 添加公共方法检查事件是否被擦除
-    Game_Event.prototype.isErased = function() {
-       return this._erased === true;
-    };
-	//=================== 保存原始的 Game_Interpreter.prototype.command214 方法==========================
-	const _Game_Interpreter_prototype_command214 = Game_Interpreter.prototype.command214;
-    Game_Interpreter.prototype.command214 = function() {
-		_Game_Interpreter_prototype_command214.call(this);
-		更新内容();
-		return true;
-    };
-	//=================== 保存原始的 Spriteset_Map.prototype.createCharacters 方法==========================
-    const _Spriteset_Map_prototype_createCharacters = Spriteset_Map.prototype.createCharacters;
-    Spriteset_Map.prototype.createCharacters = function() {
-        // 调用原始的 createCharacters 方法
-        _Spriteset_Map_prototype_createCharacters.call(this);
-		clear_one = true;
-		array =  [];
-		clear_id_array = [];
-		for (let event of $gameMap.events()) {
-			if(event.event().name == ""){
-				continue;
-			}
-			this.event_title = new Event_Title(event);
-			array.push(this.event_title);
-			this.addChild(this.event_title.sprite);
-        }
-		更新内容();
-		
-    };
-	
-	//=================== 重写 Spriteset_Map.prototype.update 方法==============================
-	const _Spriteset_Map_prototype_update = Spriteset_Map.prototype.update;
-	Spriteset_Map.prototype.update = function() {
-		_Spriteset_Map_prototype_update.call(this);
-		//主角移动时刷新文本
-		if($gamePlayer.isMoving()){
-			更新内容();
-		}else{
-			事件自己移动更新();
+		if(args.id<=0){
+			return;
 		}
-	};
-	//=================== 重写 SceneManager.push 方法==============================
-    const _SceneManager_push = SceneManager.push;
-    SceneManager.push = function(sceneClass) {
-        if (sceneClass === Scene_Battle) {
-			删除所有();
-        }
-		_SceneManager_push.call(this, sceneClass);
-    };
+		//遍历到指定精灵 设置文本
+		for(let _data of _array){
+			if(_data.id == args.id){
+				_data.setText(String(args.data));
+				return;
+			}
+		}
+    });
+	let _array = [];//所有事件的精灵数组
 	//=============================存档功能======================================
     const _Game_System_initialize = Game_System.prototype.initialize;
 	// 2. 重写初始化方法，声明自定义属性
     Game_System.prototype.initialize = function() {
         _Game_System_initialize.call(this);
-        this._event_title = { for_show: true };
-		
+        this._event_title = { for_show: true }; //保存打开关闭功能到当前存档
+    };
+	const _Spriteset_Map_prototype_createCharacters = Spriteset_Map.prototype.createCharacters;
+	Spriteset_Map.prototype.createCharacters = function() {
+		_array.length = 0;//初始化数组
+		_Spriteset_Map_prototype_createCharacters.call(this);
+	};
+	//=============================初始化事件精灵======================================
+	const _Sprite_Character_prototype_setCharacter = Sprite_Character.prototype.setCharacter;
+	Sprite_Character.prototype.setCharacter = function(character) {
+		_Sprite_Character_prototype_setCharacter.call(this, character);
+		if (!(character instanceof Game_Event)) {
+			//判断是否为事件 如果不是则返回
+		    return;
+		}
+		let _data = new Event_Name_Title(character);
+		_array.push(_data);//保存精灵的引用
+		this.addChild(_data);//添加精灵到当前事件
     };
 })();
