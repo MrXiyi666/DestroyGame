@@ -7,90 +7,100 @@
 * @author 希夷先生
 * @help
 */
-/*
-item.description 物品描述
-item.name        物品名字
-item.params[0]   最大生命值
-item.params[1]   最大灵力值
-item.params[2]   攻击力
-item.params[3]   防御力
-item.params[4]   灵术攻击力
-item.params[5]   灵术防御力
-item.params[6]   敏捷
-item.params[7]   幸运
-*/
-(() => {
-	
-	// 创建自定义窗口类
-    class Window_Base_Attributes_Help extends Window_Base {
-        constructor(rect) {
-            super(rect);
-            this.initialize(rect);
-        }
-        initialize(rect) {
-            super.initialize(rect);
-        }
-        refresh(_text) {
-            this.contents.clear();
-			this.drawTextEx(_text, 0, 0, this.contents.width);
-            
-        }
-    }
-	
-	// 修改物品列表窗口宽度
-    const _Scene_Item_createItemWindow = Scene_Item.prototype.createItemWindow;
-    Scene_Item.prototype.createItemWindow = function() {
-        _Scene_Item_createItemWindow.call(this);
-        this._itemWindow.width = 408;
+(()=>{
+	// 自定义窗口
+    function Window_Item_Help() {
+        this.initialize(...arguments);
     };
-	
-	let _Window_Base_Attributes_Help=null;
-	// 在插件中添加以下代码
-    Window_ItemList.prototype.maxCols = function() {
-        return 1; // 默认是2列，改为6列以显示更多物品
+
+    Window_Item_Help.prototype = Object.create(Window_Base.prototype);
+    Window_Item_Help.prototype.constructor = Window_Item_Help;
+
+    // 初始化窗口
+    Window_Item_Help.prototype.initialize = function(x, y, width, height) {
+        Window_Base.prototype.initialize.call(this, x, y, width, height);
+		 this.contents.fontSize = 20;
+		 this.frameVisible = false;
     };
-	
-	//=================== 保存原始的 Window_Help.prototype.setItem 方法==========================
-    const _Window_Help_prototype_setItem = Window_Help.prototype.setItem;
-	Window_Help.prototype.setItem = function(item) {
-		_Window_Help_prototype_setItem.call(this, item);
-		if(!item){
-			return;
+	//画出内容
+	Window_Item_Help.prototype.refresh = function(item_data){
+		this.contents.clear();
+		let _data_zero = item_data.name+"：";
+		let _data_one = item_data.note.split("\n");
+		this.drawText(_data_zero, 5, 0, this.contents.measureTextWidth(_data_zero));
+		for(let i=0;i<_data_one.length;i++){
+			this.drawText(_data_one[i], 5, 30 * i + 30, this.contents.measureTextWidth(_data_one[i]));
 		}
-		if(_Window_Base_Attributes_Help==null){
-			return;
-		}
-		if(item.params==null){
-			return;
-		}
-		let data = "                 基础属性\n"+
-		    "攻击力             ：" + item.params[2] + 
-			"\n防御力             ：" + item.params[3] + 
-			"\n灵术攻击力      ：" + item.params[4] + 
-			"\n灵术防御力      ：" + item.params[5] + 
-			"\n敏捷                ：" + item.params[6] + 
-			"\n幸运                ：" + item.params[7] +
-			"\n最大生命值      ：" + item.params[0] +
-			"\n最大灵力值      ：" + item.params[1];
-		_Window_Base_Attributes_Help.refresh(data);
 		
+
+	};
+	//初始化
+    const _Window_ItemList_prototype_initialize = Window_ItemList.prototype.initialize;
+    Window_ItemList.prototype.initialize = function(rect) {
+		_Window_ItemList_prototype_initialize.call(this, rect);
+        this._Item_backup_y = -1100;
+		this._Item_backup_x = -1100;
+	};
+	
+	const _Window_ItemList_prototype_drawItem = Window_ItemList.prototype.drawItem;
+	Window_ItemList.prototype.drawItem = function(index) {
+		_Window_ItemList_prototype_drawItem.call(this, index);	
     };
 	
-	//=================== 保存原始的 Scene_Item.prototype.create 方法==========================
-	const _Scene_Item_prototype_create = Scene_Item.prototype.create;
-	Scene_Item.prototype.create = function(){
-		_Scene_Item_prototype_create.call(this);
-		//进入物品栏
-		_Window_Base_Attributes_Help = new Window_Base_Attributes_Help(new Rectangle(408, 120, 400, 400));
-		 this.addWindow(_Window_Base_Attributes_Help);
-		 _Window_Base_Attributes_Help.show();
-		 _Window_Base_Attributes_Help.refresh("");
+	const _Window_Selectable_prototype_refreshCursor = Window_ItemList.prototype.refreshCursor;
+	Window_ItemList.prototype.refreshCursor = function() {
+		_Window_Selectable_prototype_refreshCursor.call(this);
 	};
-	//=================== 保存原始的 Scene_Item.prototype.onItemCancel 方法==========================
-	const _Scene_Item_prototype_onItemCancel = Scene_Item.prototype.onItemCancel;
-	Scene_Item.prototype.onItemCancel = function(){
-		_Scene_Item_prototype_onItemCancel.call(this);
-		_Window_Base_Attributes_Help.refresh("");
 	
+	const _Window_ItemList_prototype_processCancel = Window_ItemList.prototype.processCancel;
+	Window_ItemList.prototype.processCancel = function() {
+		for(let child of this.children){
+			if (child instanceof Window_Item_Help) {
+				 this.removeChild(child);
+			}
+		}
+		this._Item_backup_y=-1100;
+		this._Item_backup_x=-1100;
+		_Window_ItemList_prototype_processCancel.call(this);
 	};
+	const _Window_ItemList_prototype_update = Window_ItemList.prototype.update;
+	Window_ItemList.prototype.update = function() {
+        _Window_ItemList_prototype_update.call(this);
+        // 在 update 方法中获取坐标信息
+        const rect = this.itemRect(this.index());
+		if(!this.item()){
+			for(let child of this.children){
+			    if (child instanceof Window_Item_Help) {
+			        this.removeChild(child);
+			    }
+		    }
+			this._Item_backup_y=-1100;
+			this._Item_backup_x=-1100;
+			return;
+		}
+        if(this._Item_backup_y == rect.y && this._Item_backup_x == rect.x){
+			return;
+		}
+		for(let child of this.children){
+			if (child instanceof Window_Item_Help) {
+			    this.removeChild(child);
+			}
+		}
+		let _Window_Y = rect.y + this.itemHeight() + this.itemPadding();
+		let _data_one = this.item().note.split("\n");
+		let _Window_Height = (_data_one.length+1)*30;
+		if(this.height - rect.y < _Window_Height+this.itemHeight()){
+			_Window_Y = rect.y-_Window_Height - this.itemPadding();
+		}
+		this.addChild(new Window_Item_Help(new Rectangle(rect.x + this.itemPadding(), _Window_Y, rect.width + this.itemPadding(), _Window_Height)));
+		for(let child of this.children){
+			if (child instanceof Window_Item_Help) {
+				child.refresh(this.item());
+			}
+		}
+		console.log("rect.y", rect.y);
+		console.log("Item_backup_y", this._Item_backup_y);
+		this._Item_backup_y = rect.y;
+		this._Item_backup_x = rect.x;
+    };
 })();

@@ -90,12 +90,12 @@
 	Sprite_Character.prototype.setCharacter = function(character) {
         _Sprite_Character_prototype_setCharacter.call(this, character);
 		if (!(character instanceof Game_Player)) {
-			//判断是否为事件 如果不是则返回
+			//判断是否为角色 如果不是则返回
 		    return;
 		}
 		let _data = new Actor_Name_Title();
 		_array.push(_data);//保存精灵的引用
-		this.addChild(_data);//添加精灵到当前事件
+		this.addChild(_array[_array.length-1]);//添加精灵到当前事件
     };
     const _Game_Interpreter_prototype_command324 = Game_Interpreter.prototype.command324;
     Game_Interpreter.prototype.command324 = function(params) {
