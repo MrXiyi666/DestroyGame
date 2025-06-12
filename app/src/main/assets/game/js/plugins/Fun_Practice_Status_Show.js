@@ -19,7 +19,7 @@
  * 
 */
 (()=>{
-	
+	let _Runs_Game = false;
 	// 自定义对话窗口
     function Window_Practice_Status() {
         this.initialize(...arguments);
@@ -52,29 +52,43 @@
 	Window_Practice_Status.prototype.update = function(){
 		this.refresh();
 	};
-	
+	const _SceneManager_isGameActive = SceneManager.isGameActive;
+	SceneManager.isGameActive = function() {
+	    if(_Runs_Game){
+		    return true;
+	    }
+	    return _SceneManager_isGameActive.call(this);
+    };
 	let _Scene_Map=null;
 	//Scene_Map 地图创建窗口功能
 	const _Scene_Map_prototype_createAllWindows = Scene_Map.prototype.createAllWindows;
 	Scene_Map.prototype.createAllWindows = function() {
 		_Scene_Map_prototype_createAllWindows.call(this);
 		_Scene_Map = this;
-		//_Scene_Map.addChild(new Window_Practice_Status(new Rectangle(10, 10, 280, 178)));
+		_Runs_Game = false;
+		_Scene_Map.addChild(new Window_Practice_Status(new Rectangle(10, 10, 280, 178)));
+		for(const child of _Scene_Map.children){
+			if(child instanceof Window_Practice_Status){
+				child.hide();
+			}
+		}
 	};
 	
 	PluginManager.registerCommand('Fun_Practice_Status_Show', '打开窗口', () => {
+		_Runs_Game = true;
 		for(const child of _Scene_Map.children){
 			if(child instanceof Window_Practice_Status){
-				_Scene_Map.removeChild(child);
+				child.show();
 			}
 		}
-        _Scene_Map.addChild(new Window_Practice_Status(new Rectangle(10, 10, 280, 178)));
+        
     });
 
     PluginManager.registerCommand('Fun_Practice_Status_Show', '关闭窗口', () => {
+		_Runs_Game = false;
 	    for(const child of _Scene_Map.children){
 			if(child instanceof Window_Practice_Status){
-				_Scene_Map.removeChild(child);
+				child.hide();
 			}
 		}
     });

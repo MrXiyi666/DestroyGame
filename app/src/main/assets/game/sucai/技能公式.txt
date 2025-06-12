@@ -1,0 +1,16 @@
+用来计算基本伤害的公式，用甲表示使用者，乙表示目标。在其后加上点可以获取下方列出的属性 比如说 a.atk 表示使用者的攻击力 b.def 表示目标的防御力
+
+atk 攻击力  def 防御力
+mat 魔法攻击 mdf 魔法防御
+agi 敏捷 luk 幸运
+mhp 最大生命值 mmp最大魔法值
+hp 生命值 mp 魔法值
+
+Math.max(a.mat*1.8+a.atk - b.mdf, 1) 这样的公式
+我有三个魔法值 mmp mp mat
+我想根据当前魔法值mp 提高技能威力
+
+Math.max( (a.mat * 1.8 + a.atk) * (1 + a.mp / a.mmp) - b.mdf, 1 )
+
+Math.max( (a.mat*2) * (1 + a.mp / a.mmp) - b.mdf, 1)
+Math.max(a.atk * (1 + a.hp / a.mhp) - b.def, 1)

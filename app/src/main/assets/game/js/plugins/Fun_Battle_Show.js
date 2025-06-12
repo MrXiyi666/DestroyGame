@@ -89,8 +89,6 @@
 	// 物品窗口坐标修改
 	const _Window_BattleItem_prototype_initialize = Window_BattleItem.prototype.initialize;
 	Window_BattleItem.prototype.initialize = function(rect) {
-		rect.x = 408;
-		rect.width = 408;
 		rect.height = 360;
         _Window_BattleItem_prototype_initialize.call(this, rect);
     };
